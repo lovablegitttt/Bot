@@ -1,0 +1,6 @@
+{
+  "name": "Telegram AI Image Bot Studio",
+  "description": "Professional Telegram AI Image Generation Bot powered by Cloudflare Workers AI with Admin controls, live simulator, webhooks, and analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
