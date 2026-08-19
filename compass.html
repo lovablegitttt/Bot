@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>iPhone Compass</title>
+    <title>Professional Compass</title>
     <style>
         * {
             margin: 0;
@@ -11,29 +11,70 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
             width: 100%;
-            height: 100vh;
-            background: #000;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
             overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
-        .compass-container {
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .compass-wrapper {
             position: relative;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, rgba(100, 100, 100, 0.3), #1a1a1a);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(0, 0, 0, 0.5);
+            width: 360px;
+            height: 360px;
             display: flex;
             justify-content: center;
             align-items: center;
-            perspective: 1000px;
+            filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.9));
+        }
+
+        .compass-outer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #2a2a2a, #0d0d0d);
+            border: 3px solid #1a1a1a;
+            box-shadow: 
+                inset 0 2px 8px rgba(255, 255, 255, 0.15),
+                inset 0 -2px 8px rgba(0, 0, 0, 0.8),
+                0 20px 50px rgba(0, 0, 0, 0.95);
+        }
+
+        .compass-bezel {
+            position: absolute;
+            width: 95%;
+            height: 95%;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                #1a1a1a 0deg,
+                #242424 90deg,
+                #1a1a1a 180deg,
+                #151515 270deg,
+                #1a1a1a 360deg
+            );
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .compass-dial {
@@ -41,78 +82,108 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            transition: transform 0.1s ease-out;
+            transition: transform 0.05s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: center;
         }
 
-        .compass-bg {
+        .dial-base {
             position: absolute;
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: 
-                conic-gradient(
-                    from 0deg,
-                    #333 0deg 45deg,
-                    #222 45deg 90deg,
-                    #333 90deg 135deg,
-                    #222 135deg 180deg,
-                    #333 180deg 225deg,
-                    #222 225deg 270deg,
-                    #333 270deg 315deg,
-                    #222 315deg 360deg
-                );
+            background: radial-gradient(circle at center, #1a1a1a 0%, #0f0f0f 100%);
         }
 
-        .compass-markings {
+        .minute-markers {
             position: absolute;
             width: 100%;
             height: 100%;
-            border-radius: 50%;
         }
 
-        .tick {
+        .marker {
             position: absolute;
             left: 50%;
-            background: rgba(255, 255, 255, 0.6);
-            transform-origin: center 150px;
-        }
-
-        .tick.major {
-            width: 2px;
-            height: 20px;
-            margin-left: -1px;
-            background: rgba(255, 255, 255, 0.9);
             top: 0;
+            transform-origin: center 180px;
+            margin-left: -1px;
         }
 
-        .tick.minor {
-            width: 1px;
-            height: 10px;
-            margin-left: -0.5px;
-            top: 5px;
+        .marker.major {
+            width: 3px;
+            height: 28px;
+            background: linear-gradient(to bottom, #fff, rgba(255,255,255,0.7));
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
         }
 
-        .direction {
+        .marker.minor {
+            width: 2px;
+            height: 14px;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .degree-numbers {
             position: absolute;
             width: 100%;
             height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
-        .direction-text {
+        .degree-number {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            left: 50%;
+            top: 0;
+            margin-left: -20px;
+            transform-origin: center 180px;
+        }
+
+        .cardinal-directions {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .cardinal {
             position: absolute;
             color: #fff;
-            font-weight: 600;
-            font-size: 18px;
-            letter-spacing: 1px;
+            font-weight: 700;
+            font-size: 20px;
+            letter-spacing: 1.5px;
         }
 
-        .n { top: 25px; }
-        .e { right: 25px; }
-        .s { bottom: 25px; }
-        .w { left: 25px; }
+        .cardinal.n {
+            top: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff4444;
+            text-shadow: 0 2px 8px rgba(255, 68, 68, 0.6);
+            font-size: 24px;
+        }
+
+        .cardinal.e {
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .cardinal.s {
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cardinal.w {
+            left: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 
         .needle-container {
             position: absolute;
@@ -121,222 +192,418 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10;
+            z-index: 50;
         }
 
         .needle {
             position: absolute;
-            width: 4px;
-            height: 110px;
+            width: 5px;
+            height: 140px;
             top: 20px;
-            background: linear-gradient(to bottom, #ff3b30 0%, #ff3b30 50%, rgba(255, 59, 48, 0.3) 100%);
-            border-radius: 2px;
-            box-shadow: 0 0 10px rgba(255, 59, 48, 0.6);
+            background: linear-gradient(to bottom, 
+                #ff3b30 0%,
+                #ff3b30 48%,
+                #e8e8e8 48%,
+                #e8e8e8 100%
+            );
+            border-radius: 3px;
+            box-shadow: 
+                0 0 2px rgba(255, 59, 48, 0.8),
+                0 4px 12px rgba(0, 0, 0, 0.6),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
         }
 
-        .center-circle {
+        .needle::before {
+            content: '';
             position: absolute;
-            width: 16px;
-            height: 16px;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), #333);
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 12px solid #ff3b30;
+            filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8));
+        }
+
+        .center-housing {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: radial-gradient(circle at 35% 35%, #4a4a4a, #1a1a1a);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            z-index: 20;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+            z-index: 60;
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.8),
+                inset 0 1px 3px rgba(255, 255, 255, 0.2),
+                inset 0 -1px 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .center-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle at 30% 30%, #666, #222);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
         }
 
         .heading-display {
             position: absolute;
-            bottom: 30px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
-            color: #fff;
-            z-index: 30;
+            z-index: 70;
         }
 
         .heading-value {
-            font-size: 32px;
+            font-size: 48px;
             font-weight: 700;
-            letter-spacing: -1px;
+            color: #fff;
+            letter-spacing: -2px;
+            line-height: 1;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
         }
 
-        .heading-label {
-            font-size: 12px;
+        .heading-unit {
+            font-size: 18px;
             color: rgba(255, 255, 255, 0.6);
-            margin-top: 4px;
-            letter-spacing: 0.5px;
+            font-weight: 600;
+            letter-spacing: 1px;
         }
 
-        .status {
+        .heading-direction {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 6px;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .status-bar {
             position: absolute;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            z-index: 50;
             text-align: center;
-            z-index: 5;
         }
 
-        .error-message {
+        .accuracy-indicator {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 0.5px;
+            z-index: 50;
+        }
+
+        .accuracy-dot {
+            width: 6px;
+            height: 6px;
+            background: #4cd964;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(76, 217, 100, 0.6);
+        }
+
+        .info-panel {
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 300px;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 13px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .info-value {
+            color: #fff;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .permission-prompt {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #ff9500;
-            font-size: 14px;
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
             text-align: center;
-            width: 80%;
-            z-index: 40;
+            max-width: 320px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
             display: none;
         }
 
-        .error-message.show {
+        .permission-prompt.show {
             display: block;
+        }
+
+        .permission-prompt h2 {
+            color: #fff;
+            font-size: 18px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .permission-prompt p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .permission-button {
+            background: #007AFF;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .permission-button:hover {
+            background: #0051D5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
+        @media (max-width: 480px) {
+            .compass-wrapper {
+                width: 280px;
+                height: 280px;
+            }
+
+            .info-panel {
+                min-width: 280px;
+            }
+
+            .heading-value {
+                font-size: 40px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="compass-container">
-        <div class="status" id="status">Initializing...</div>
-        
-        <div class="compass-dial" id="compassDial">
-            <div class="compass-bg"></div>
-            <div class="compass-markings" id="markings"></div>
-            <div class="direction">
-                <div class="direction-text n">N</div>
-                <div class="direction-text e">E</div>
-                <div class="direction-text s">S</div>
-                <div class="direction-text w">W</div>
+    <div class="main-container">
+        <div class="compass-wrapper">
+            <div class="compass-outer"></div>
+            <div class="compass-bezel">
+                <div class="compass-dial" id="compassDial">
+                    <div class="dial-base"></div>
+                    <div class="minute-markers" id="markers"></div>
+                    <div class="degree-numbers" id="numbers"></div>
+                    <div class="cardinal-directions">
+                        <div class="cardinal n">N</div>
+                        <div class="cardinal e">E</div>
+                        <div class="cardinal s">S</div>
+                        <div class="cardinal w">W</div>
+                    </div>
+                </div>
+                <div class="needle-container">
+                    <div class="needle"></div>
+                </div>
+                <div class="center-housing">
+                    <div class="center-dot"></div>
+                </div>
+                <div class="heading-display">
+                    <div class="heading-value" id="headingValue">0°</div>
+                    <div class="heading-unit">MAGNETIC</div>
+                    <div class="heading-direction" id="headingDirection">NORTH</div>
+                </div>
+                <div class="status-bar" id="statusBar">INITIALIZING</div>
+                <div class="accuracy-indicator">
+                    <div class="accuracy-dot"></div>
+                    <span id="accuracyText">HIGH ACCURACY</span>
+                </div>
             </div>
         </div>
 
-        <div class="needle-container">
-            <div class="needle" id="needle"></div>
+        <div class="info-panel">
+            <div class="info-row">
+                <span class="info-label">BEARING</span>
+                <span class="info-value" id="bearing">000°</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">DIRECTION</span>
+                <span class="info-value" id="direction">N</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">STATUS</span>
+                <span class="info-value" id="deviceStatus">READY</span>
+            </div>
         </div>
+    </div>
 
-        <div class="center-circle"></div>
-
-        <div class="heading-display">
-            <div class="heading-value" id="headingValue">0°</div>
-            <div class="heading-label" id="headingLabel">N</div>
-        </div>
-
-        <div class="error-message" id="errorMessage"></div>
+    <div class="permission-prompt" id="permissionPrompt">
+        <h2>Enable Motion Access</h2>
+        <p>This compass needs access to your device's motion sensors to function</p>
+        <button class="permission-button" id="permissionButton">Enable</button>
     </div>
 
     <script>
         const compassDial = document.getElementById('compassDial');
-        const needle = document.getElementById('needle');
         const headingValue = document.getElementById('headingValue');
-        const headingLabel = document.getElementById('headingLabel');
-        const status = document.getElementById('status');
-        const errorMessage = document.getElementById('errorMessage');
-        const markings = document.getElementById('markings');
+        const headingDirection = document.getElementById('headingDirection');
+        const statusBar = document.getElementById('statusBar');
+        const bearing = document.getElementById('bearing');
+        const direction = document.getElementById('direction');
+        const deviceStatus = document.getElementById('deviceStatus');
+        const permissionPrompt = document.getElementById('permissionPrompt');
+        const permissionButton = document.getElementById('permissionButton');
+        const markersContainer = document.getElementById('markers');
+        const numbersContainer = document.getElementById('numbers');
 
-        // Create compass markings
-        function createMarkings() {
+        // Create markers and numbers
+        function createMarkers() {
             for (let i = 0; i < 360; i += 5) {
-                const tick = document.createElement('div');
-                if (i % 30 === 0) {
-                    tick.className = 'tick major';
-                } else {
-                    tick.className = 'tick minor';
-                }
-                tick.style.transform = `rotate(${i}deg)`;
-                markings.appendChild(tick);
+                const marker = document.createElement('div');
+                marker.className = i % 30 === 0 ? 'marker major' : 'marker minor';
+                marker.style.transform = `rotate(${i}deg)`;
+                markersContainer.appendChild(marker);
             }
         }
-        createMarkings();
 
-        function getDirection(heading) {
-            if (heading >= 348.75 || heading < 11.25) return 'N';
-            if (heading >= 11.25 && heading < 33.75) return 'NNE';
-            if (heading >= 33.75 && heading < 56.25) return 'NE';
-            if (heading >= 56.25 && heading < 78.75) return 'ENE';
-            if (heading >= 78.75 && heading < 101.25) return 'E';
-            if (heading >= 101.25 && heading < 123.75) return 'ESE';
-            if (heading >= 123.75 && heading < 146.25) return 'SE';
-            if (heading >= 146.25 && heading < 168.75) return 'SSE';
-            if (heading >= 168.75 && heading < 191.25) return 'S';
-            if (heading >= 191.25 && heading < 213.75) return 'SSW';
-            if (heading >= 213.75 && heading < 236.25) return 'SW';
-            if (heading >= 236.25 && heading < 258.75) return 'WSW';
-            if (heading >= 258.75 && heading < 281.25) return 'W';
-            if (heading >= 281.25 && heading < 303.75) return 'WNW';
-            if (heading >= 303.75 && heading < 326.25) return 'NW';
-            if (heading >= 326.25 && heading < 348.75) return 'NNW';
-            return 'N';
+        function createNumbers() {
+            for (let i = 0; i < 360; i += 30) {
+                const num = document.createElement('div');
+                num.className = 'degree-number';
+                num.textContent = i === 0 ? '0' : i;
+                num.style.transform = `rotate(${i}deg) translateY(-155px)`;
+                numbersContainer.appendChild(num);
+            }
         }
 
-        // Request permission and start listening to device orientation
-        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-            // iOS 13+ requires permission
-            DeviceOrientationEvent.requestPermission()
-                .then(permissionState => {
-                    if (permissionState === 'granted') {
-                        window.addEventListener('deviceorientation', handleOrientation);
-                        status.textContent = 'Calibrate by moving phone in figure-8';
-                    } else {
-                        showError('Permission denied. Please enable in Settings > Compass');
-                    }
-                })
-                .catch(() => {
-                    showError('Device orientation not supported');
-                });
-        } else if (typeof DeviceOrientationEvent !== 'undefined') {
-            // Non-iOS devices
-            window.addEventListener('deviceorientation', handleOrientation);
-            status.textContent = 'Calibrate by moving phone in figure-8';
-        } else {
-            showError('Device orientation not supported on this device');
+        createMarkers();
+        createNumbers();
+
+        const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+        const fullDirections = {
+            'N': 'NORTH',
+            'NNE': 'NORTH-NORTHEAST',
+            'NE': 'NORTHEAST',
+            'ENE': 'EAST-NORTHEAST',
+            'E': 'EAST',
+            'ESE': 'EAST-SOUTHEAST',
+            'SE': 'SOUTHEAST',
+            'SSE': 'SOUTH-SOUTHEAST',
+            'S': 'SOUTH',
+            'SSW': 'SOUTH-SOUTHWEST',
+            'SW': 'SOUTHWEST',
+            'WSW': 'WEST-SOUTHWEST',
+            'W': 'WEST',
+            'WNW': 'WEST-NORTHWEST',
+            'NW': 'NORTHWEST',
+            'NNW': 'NORTH-NORTHWEST'
+        };
+
+        function getDirection(heading) {
+            const index = Math.round((heading % 360) / 22.5) % 16;
+            return directions[index];
         }
 
         function handleOrientation(event) {
-            let heading = event.alpha; // 0-360
+            let heading = Math.round(event.alpha);
+            if (heading < 0) heading += 360;
 
-            // Adjust for device orientation if needed
-            if (window.orientation === 90) {
-                heading = (heading + 90) % 360;
-            } else if (window.orientation === -90) {
-                heading = (heading - 90 + 360) % 360;
-            } else if (window.orientation === 180) {
-                heading = (heading + 180) % 360;
-            }
-
-            heading = Math.round(heading);
-
-            // Update compass dial
+            const dir = getDirection(heading);
+            
             compassDial.style.transform = `rotate(${-heading}deg)`;
-
-            // Update heading display
             headingValue.textContent = `${heading}°`;
-            headingLabel.textContent = getDirection(heading);
-
-            status.textContent = '';
+            headingDirection.textContent = fullDirections[dir];
+            bearing.textContent = `${String(heading).padStart(3, '0')}°`;
+            direction.textContent = dir;
+            deviceStatus.textContent = 'ACTIVE';
+            statusBar.textContent = '';
         }
 
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.add('show');
-            status.textContent = '';
-        }
-
-        // Handle tap to request permission again
-        document.addEventListener('click', () => {
+        function requestPermission() {
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
                     .then(permissionState => {
                         if (permissionState === 'granted') {
                             window.addEventListener('deviceorientation', handleOrientation);
-                            errorMessage.classList.remove('show');
-                            status.textContent = 'Calibrate by moving phone in figure-8';
+                            permissionPrompt.classList.remove('show');
+                            deviceStatus.textContent = 'ACTIVE';
+                        } else {
+                            deviceStatus.textContent = 'DENIED';
                         }
                     })
-                    .catch(console.error);
+                    .catch(() => {
+                        deviceStatus.textContent = 'ERROR';
+                    });
+            } else if (typeof DeviceOrientationEvent !== 'undefined') {
+                window.addEventListener('deviceorientation', handleOrientation);
+                permissionPrompt.classList.remove('show');
+                deviceStatus.textContent = 'ACTIVE';
+            } else {
+                deviceStatus.textContent = 'UNAVAILABLE';
             }
-        });
+        }
+
+        if (typeof DeviceOrientationEvent !== 'undefined') {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                permissionPrompt.classList.add('show');
+                permissionButton.addEventListener('click', requestPermission);
+            } else {
+                requestPermission();
+            }
+        } else {
+            deviceStatus.textContent = 'UNAVAILABLE';
+            statusBar.textContent = 'DEVICE ORIENTATION NOT SUPPORTED';
+        }
+
+        // Simulate for desktop testing
+        let simulatedHeading = 0;
+        if (typeof DeviceOrientationEvent === 'undefined') {
+            const interval = setInterval(() => {
+                simulatedHeading = (simulatedHeading + 0.5) % 360;
+                const event = { alpha: simulatedHeading };
+                handleOrientation(event);
+            }, 50);
+        }
     </script>
 </body>
 </html>
